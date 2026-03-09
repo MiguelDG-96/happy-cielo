@@ -3,6 +3,23 @@ const matrixCtx = matrixCanvas.getContext('2d');
 const starCanvas = document.getElementById('starCanvas');
 const starCtx = starCanvas.getContext('2d');
 
+// Global Data Configuration
+const photos = [
+    'fotos/cielo.jpeg',
+    'fotos/cielo-2.jpeg',
+    'fotos/cielo-3.jpeg',
+    'fotos/cielo-peluche.jpeg'
+];
+
+const albumMessages = [
+    "Happy Birthday Cielo ❤",
+    "Eres la persona más especial ✨",
+    "Cada momento contigo es único 🌹",
+    "Te quiero muchísimo Cielo Sarahi ❤"
+];
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 // Matrix Background Implementation
 function initMatrix() {
     matrixCanvas.width = window.innerWidth;
@@ -86,7 +103,6 @@ async function runSequence() {
     ];
     
     const gifContainer = document.getElementById('gif-container');
-    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
     for (let i = 0; i < messages.length; i++) {
         messages[i].classList.add('visible');
@@ -133,23 +149,8 @@ function startNotebookPhase() {
     const photoLeft = document.getElementById('photo-left');
     const photoRight = document.getElementById('photo-right');
 
-    const photos = [
-        'fotos/cielo.jpeg',
-        'fotos/cielo-2.jpeg',
-        'fotos/cielo-3.jpeg',
-        'fotos/cielo-peluche.jpeg',
-        'fotos/cielo.jpeg', // Repeat for even pages if needed
-        'fotos/cielo-2.jpeg'
-    ];
-
-    const messages = [
-        "Happy Birthday Cielo ❤",
-        "Eres la persona más especial ✨",
-        "Cada momento contigo es único 🌹",
-        "Te quiero muchísimo Cielo Sarahi ❤"
-    ];
-
     let currentPage = 0;
+    let isAnimating = false;
 
     notebookContainer.classList.remove('hidden');
     notebookContainer.style.pointerEvents = "auto";
@@ -165,7 +166,10 @@ function startNotebookPhase() {
     };
 
     book3D.onclick = async () => {
-        if (currentPage < photos.length / 2 - 1) {
+        if (isAnimating) return;
+
+        if (currentPage < Math.ceil(photos.length / 2) - 1) {
+            isAnimating = true;
             // Swipe Animation Logic
             manosSwipe.classList.remove('hidden');
             manosSwipe.classList.remove('exit');
@@ -187,41 +191,39 @@ function startNotebookPhase() {
             
             await sleep(500);
             manosSwipe.classList.add('hidden');
+            isAnimating = false;
         } else {
             // Close Sequence
+            isAnimating = true;
             topMsgBox.classList.remove('visible');
             book3D.classList.add('hidden');
             notebookClosed.classList.remove('hidden');
-            await sleep(2000);
+            await sleep(1000);
             notebookContainer.classList.add('hidden');
             startHeartPhotosPhase();
+            isAnimating = false;
         }
     };
 
     function showPagePair(index) {
-        topMsgText.innerText = messages[index % messages.length];
-        photoLeft.src = photos[index * 2];
-        photoRight.src = photos[index * 2 + 1];
+        topMsgText.innerText = albumMessages[index % albumMessages.length] || "";
+        photoLeft.src = photos[index * 2] || "";
+        photoRight.src = photos[index * 2 + 1] || "";
     }
 }
 
 async function startHeartPhotosPhase() {
     const container = document.getElementById('heart-photos-container');
     container.classList.remove('hidden');
-    
-    const photos = [
-        'fotos/cielo.jpeg',
-        'fotos/cielo-2.jpeg',
-        'fotos/cielo-3.jpeg',
-        'fotos/cielo-peluche.jpeg'
-    ];
 
     // Heart shape points (approximate)
     const points = [];
+    const scaleFactor = window.innerWidth < 768 ? 10 : 15; // smaller for mobile
+
     for (let t = 0; t <= Math.PI * 2; t += 0.3) {
         const x = 16 * Math.pow(Math.sin(t), 3);
         const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-        points.push({ x: x * 15 + window.innerWidth / 2, y: y * 15 + window.innerHeight / 2 });
+        points.push({ x: x * scaleFactor + window.innerWidth / 2, y: y * scaleFactor + window.innerHeight / 2 });
     }
 
     const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -230,8 +232,8 @@ async function startHeartPhotosPhase() {
         const img = document.createElement('img');
         img.src = photos[i % photos.length];
         img.className = 'heart-photo';
-        img.style.left = (points[i].x - 50) + 'px';
-        img.style.top = (points[i].y - 50) + 'px';
+        img.style.left = (points[i].x - (window.innerWidth < 768 ? 30 : 50)) + 'px';
+        img.style.top = (points[i].y - (window.innerWidth < 768 ? 30 : 50)) + 'px';
         container.appendChild(img);
         
         await sleep(150);
@@ -241,10 +243,76 @@ async function startHeartPhotosPhase() {
     await sleep(2000);
     // Final touch: maybe a message appears in the center
     const finalMsg = document.createElement('div');
-    finalMsg.innerHTML = "FELIZ CUMPLEAÑOS CIELO";
-    finalMsg.style.cssText = "position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:3rem; color:white; text-shadow: 0 0 20px #ff00ff; font-family:'Orbitron'; z-index:20; white-space:nowrap; opacity:0; transition:opacity 2s;";
+    finalMsg.innerHTML = "FELIZ CUMPLEAÑOS CIELO SARAÍ";
+    finalMsg.className = "final-birthday-message";
     container.appendChild(finalMsg);
-    setTimeout(() => finalMsg.style.opacity = "1", 100);
+    
+    setTimeout(() => {
+        finalMsg.style.opacity = "1";
+        triggerConfettiSequence();
+    }, 100);
+}
+
+function triggerConfettiSequence() {
+    const duration = 15 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    const randomInRange = (min, max) => Math.random() * (max - min) + min;
+
+    const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+            return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        
+        // "Poppers" from corners
+        confetti({
+            ...defaults,
+            particleCount,
+            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+        });
+        confetti({
+            ...defaults,
+            particleCount,
+            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+        });
+    }, 250);
+
+    // Initial big bursts
+    const fire = (particleCount, opts) => {
+        confetti({
+            ...opts,
+            particleCount,
+            origin: { y: 0.7 }
+        });
+    };
+
+    fire(200, {
+        spread: 26,
+        startVelocity: 55,
+    });
+    fire(200, {
+        spread: 60,
+    });
+    fire(200, {
+        spread: 100,
+        decay: 0.91,
+        scalar: 0.8
+    });
+    fire(200, {
+        spread: 120,
+        startVelocity: 25,
+        decay: 0.92,
+        scalar: 1.2
+    });
+    fire(200, {
+        spread: 120,
+        startVelocity: 45,
+    });
 }
 
 // Window resize handler

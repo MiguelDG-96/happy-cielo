@@ -209,11 +209,27 @@ body {
 /* Two-Page 3D Book Styles */
 #book-3d {
     width: 800px;
+    max-width: 95vw;
     height: 500px;
     position: relative;
     perspective: 1500px;
     display: flex;
     justify-content: center;
+}
+
+@media (max-width: 850px) {
+    #book-3d {
+        height: 350px;
+    }
+    .page-side {
+        padding: 10px;
+    }
+    #top-message-text {
+        font-size: 1.1rem;
+    }
+    #top-message-box {
+        padding: 10px 30px;
+    }
 }
 
 .book-pages-container {
@@ -350,9 +366,34 @@ body {
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+@media (max-width: 768px) {
+    .heart-photo {
+        width: 60px;
+        height: 60px;
+    }
+}
+
 .heart-photo.visible {
     opacity: 1;
     transform: scale(1);
+}
+
+.final-birthday-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(1.5rem, 8vw, 3.5rem);
+    color: white;
+    text-shadow: 0 0 20px #ff00ff;
+    font-family: 'Orbitron', sans-serif;
+    z-index: 20;
+    white-space: normal;
+    text-align: center;
+    width: 90%;
+    opacity: 0;
+    transition: opacity 2s;
+    pointer-events: none;
 }
 
 .hidden {
