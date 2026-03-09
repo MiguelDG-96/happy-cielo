@@ -209,6 +209,52 @@ function startNotebookPhase() {
         topMsgText.innerText = albumMessages[index % albumMessages.length] || "";
         photoLeft.src = photos[index * 2] || "";
         photoRight.src = photos[index * 2 + 1] || "";
+
+        // Inject dynamic hearts
+        injectDecorativeHearts(document.getElementById('decor-left'));
+        injectDecorativeHearts(document.getElementById('decor-right'));
+    }
+
+    function injectDecorativeHearts(container) {
+        // Clear existing hearts (keep the img)
+        const img = container.querySelector('img');
+        container.innerHTML = '';
+        container.appendChild(img);
+
+        const heartCount = 3 + Math.floor(Math.random() * 3); // 3-5 hearts
+        const pairsCount = Math.floor(Math.random() * 2); // 0-1 pairs
+
+        for (let i = 0; i < heartCount; i++) {
+            const isPair = i < pairsCount * 2;
+            const heart = document.createElement('div');
+            heart.className = 'decor-heart';
+            heart.innerHTML = '❤';
+
+            let x, y;
+            if (isPair && i % 2 !== 0) {
+                // Place near the previous heart
+                const prevHeart = container.lastChild;
+                const prevX = parseFloat(prevHeart.style.left);
+                const prevY = parseFloat(prevHeart.style.top);
+                x = prevX + (Math.random() * 10 - 5); // very close
+                y = prevY + (Math.random() * 10 - 5);
+                heart.style.fontSize = (parseFloat(prevHeart.style.fontSize) * 0.8) + 'rem';
+                heart.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
+            } else {
+                // Random position avoiding central image area mostly
+                x = Math.random() * 90;
+                y = Math.random() * 90;
+                heart.style.fontSize = (0.8 + Math.random() * 1.5) + 'rem';
+                heart.style.transform = `rotate(${Math.random() * 360}deg)`;
+            }
+
+            heart.style.left = x + '%';
+            heart.style.top = y + '%';
+            heart.style.animationDelay = (Math.random() * 2) + 's';
+            heart.style.opacity = 0.6 + Math.random() * 0.4;
+
+            container.appendChild(heart);
+        }
     }
 }
 
