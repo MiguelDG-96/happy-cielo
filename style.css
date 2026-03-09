@@ -206,90 +206,113 @@ body {
     60% { transform: scale(1); }
 }
 
-/* Single Page 3D Book Styles */
+/* Two-Page 3D Book Styles */
 #book-3d {
-    width: 400px;
-    height: 550px;
+    width: 800px;
+    height: 500px;
     position: relative;
     perspective: 1500px;
+    display: flex;
+    justify-content: center;
 }
 
-.book-page {
+.book-pages-container {
     width: 100%;
     height: 100%;
     background: #FDFCFC;
     border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-    padding: 20px;
+    box-shadow: 0 10px 50px rgba(0,0,0,0.5);
     display: flex;
-    flex-direction: column;
-    transform-origin: left;
-    transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+    position: relative;
+    overflow: hidden;
 }
 
-.book-page.flipping {
-    transform: rotateY(-180deg);
-    opacity: 0;
-}
-
-.page-content {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    gap: 20px;
-    pointer-events: none;
-}
-
-.photo-frame-single {
+.page-side {
     flex: 1;
+    height: 100%;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.left-page {
+    border-right: 1px solid #ddd;
+}
+
+.photo-frame {
+    width: 100%;
+    height: 100%;
     background: #fff;
-    border: 8px solid white;
-    border-bottom: 40px solid white; /* Polaroid style */
+    border: 5px solid white;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-radius: 5px;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.photo-frame-single img {
-    width: 100%;
-    height: 100%;
+.photo-frame img {
+    max-width: 100%;
+    max-height: 100%;
     object-fit: cover;
 }
 
-.message-under {
-    text-align: center;
-    padding: 10px;
+#top-message-box {
+    background: #FDFCFC;
+    padding: 15px 60px;
+    border-radius: 50px;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    opacity: 0;
+    transform: translateY(-50px);
+    transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 100;
 }
 
-#single-message {
+#top-message-box.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#top-message-text {
     font-family: 'Orbitron', sans-serif;
     color: #333;
-    font-size: 1.2rem;
-    font-weight: 600;
-    line-height: 1.4;
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-#manos-animated {
+#manos-swipe {
     position: absolute;
-    bottom: -20px;
-    right: -100px;
-    width: 400px;
-    z-index: 100;
+    bottom: -150px;
+    right: -200px;
+    width: 500px;
+    z-index: 200;
     pointer-events: none;
-    transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 1s cubic-bezier(0.45, 0.05, 0.55, 0.95);
     opacity: 0;
 }
 
-#manos-animated.flipping-action {
+#manos-swipe.swiping {
     opacity: 1;
+    bottom: 50px;
     right: 50%;
-    transform: translateX(50%) rotate(-10deg);
+    transform: translateX(50%) scale(1.1);
 }
 
-#top-message-box {
-    display: none !important; /* No longer needed in this layout */
+#manos-swipe.exit {
+    right: 120%;
+    opacity: 0;
+}
+
+/* Transition for pages during swipe */
+.book-pages-container.fading {
+    opacity: 0.3;
+    transform: translateX(-20px);
+    transition: all 0.5s ease;
 }
 
 #manos-final {

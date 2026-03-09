@@ -126,23 +126,27 @@ function startNotebookPhase() {
     const notebookContainer = document.getElementById('notebook-container');
     const notebookClosed = document.getElementById('notebook-closed');
     const book3D = document.getElementById('book-3d');
-    const bookPage = document.querySelector('.book-page');
-    const manosAnimated = document.getElementById('manos-animated');
-    const singlePhoto = document.getElementById('single-photo');
-    const singleMsg = document.getElementById('single-message');
+    const pagesContainer = document.querySelector('.book-pages-container');
+    const manosSwipe = document.getElementById('manos-swipe');
+    const topMsgBox = document.getElementById('top-message-box');
+    const topMsgText = document.getElementById('top-message-text');
+    const photoLeft = document.getElementById('photo-left');
+    const photoRight = document.getElementById('photo-right');
 
     const photos = [
         'fotos/cielo.jpeg',
         'fotos/cielo-2.jpeg',
         'fotos/cielo-3.jpeg',
-        'fotos/cielo-peluche.jpeg'
+        'fotos/cielo-peluche.jpeg',
+        'fotos/cielo.jpeg', // Repeat for even pages if needed
+        'fotos/cielo-2.jpeg'
     ];
 
     const messages = [
-        "Para la niña más hermosa del mundo ❤",
-        "Tu sonrisa ilumina cada uno de mis días ✨",
-        "Cielo Sarahi, eres mi persona favorita 🌹",
-        "Gracias por ser parte de mi vida, te quiero ❤"
+        "Happy Birthday Cielo ❤",
+        "Eres la persona más especial ✨",
+        "Cada momento contigo es único 🌹",
+        "Te quiero muchísimo Cielo Sarahi ❤"
     ];
 
     let currentPage = 0;
@@ -153,29 +157,39 @@ function startNotebookPhase() {
     notebookClosed.onclick = async () => {
         notebookClosed.classList.add('hidden');
         book3D.classList.remove('hidden');
-        showPageData(0);
+        topMsgBox.classList.remove('hidden');
+        
+        await sleep(100);
+        topMsgBox.classList.add('visible');
+        showPagePair(0);
     };
 
     book3D.onclick = async () => {
-        if (currentPage < photos.length - 1) {
-            // Flip Animation with Hands
-            manosAnimated.classList.remove('hidden');
+        if (currentPage < photos.length / 2 - 1) {
+            // Swipe Animation Logic
+            manosSwipe.classList.remove('hidden');
+            manosSwipe.classList.remove('exit');
+            
             await sleep(50);
-            manosAnimated.classList.add('flipping-action');
+            manosSwipe.classList.add('swiping');
             
-            await sleep(200);
-            bookPage.classList.add('flipping');
+            await sleep(600);
+            pagesContainer.classList.add('fading');
             
-            await sleep(800);
+            await sleep(400);
             currentPage++;
-            showPageData(currentPage);
-            bookPage.classList.remove('flipping');
-            manosAnimated.classList.remove('flipping-action');
+            showPagePair(currentPage);
+            manosSwipe.classList.add('exit');
+            manosSwipe.classList.remove('swiping');
             
-            await sleep(800);
-            manosAnimated.classList.add('hidden');
+            await sleep(300);
+            pagesContainer.classList.remove('fading');
+            
+            await sleep(500);
+            manosSwipe.classList.add('hidden');
         } else {
-            // End Sequence
+            // Close Sequence
+            topMsgBox.classList.remove('visible');
             book3D.classList.add('hidden');
             notebookClosed.classList.remove('hidden');
             await sleep(2000);
@@ -184,9 +198,10 @@ function startNotebookPhase() {
         }
     };
 
-    function showPageData(index) {
-        singlePhoto.src = photos[index];
-        singleMsg.innerText = messages[index];
+    function showPagePair(index) {
+        topMsgText.innerText = messages[index % messages.length];
+        photoLeft.src = photos[index * 2];
+        photoRight.src = photos[index * 2 + 1];
     }
 }
 

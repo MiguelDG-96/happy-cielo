@@ -40,30 +40,29 @@
 
         <!-- Notebook Phase -->
         <div id="notebook-container" class="hidden">
-            <div id="top-message-box">
-                <span id="top-message-text">Happy Birthday Cielo ❤</span>
+            <div id="top-message-box" class="hidden">
+                <p id="top-message-text"></p>
             </div>
+
             <div id="notebook-wrapper">
                 <div id="notebook-closed">
                     <div class="heart-mini">❤</div>
                     <img src="manos/manos.png" alt="Hands" class="manos-closed">
                 </div>
                 
-                <!-- Single Page 3D Book -->
+                <!-- Two-Page 3D Book -->
                 <div id="book-3d" class="hidden">
-                    <div class="book-page">
-                        <div class="page-content">
-                            <div class="photo-frame-single">
-                                <img id="single-photo" src="" alt="">
-                            </div>
-                            <div class="message-under">
-                                <p id="single-message"></p>
-                            </div>
+                    <div class="book-pages-container">
+                        <div class="page-side left-page">
+                            <div class="photo-frame"><img id="photo-left" src="" alt=""></div>
+                        </div>
+                        <div class="page-side right-page">
+                            <div class="photo-frame"><img id="photo-right" src="" alt=""></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <img src="manos/manos.png" alt="Hands" id="manos-animated" class="hidden">
+            <img src="manos/manos.png" alt="Hands" id="manos-swipe" class="hidden">
             <img src="manos/manos.png" alt="Hands" id="manos-final" class="hidden">
         </div>
 
